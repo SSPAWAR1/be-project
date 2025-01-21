@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Tumor Prediction</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Times New Roman', serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        form {
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        label, button {
+            display: block;
+            margin: 10px auto;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        #brain-image {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Brain Tumor Prediction Web App</h1>
+    <img id="brain-image" src="/static/brain.png" alt="Brain Image" width="300">
+    <form action="/predict" method="post" enctype="multipart/form-data">
+        <label for="file">Upload an MRI image of the brain:</label>
+        <input type="file" id="file" name="file" accept="image/*" required>
+        <button type="submit">Predict</button>
+    </form>
+    <div id="result">
+        <h2>Prediction Result:</h2>
+        <p id="predicted-class">Predicted Class: N/A</p>
+        <p id="confidence">Confidence: N/A</p>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('predicted-class').textContent = 'Predicted Class: ' + data.predicted_class;
+                document.getElementById('confidence').textContent = 'Confidence: ' + data.confidence.toFixed(2) + '%';
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
